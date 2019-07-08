@@ -16,6 +16,8 @@ use Illuminate\Http\Request;
 //development - test
 Route::post('/test','TestController@index');
 
+Route::post('/tools','ToolsController@index');
+
 Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
