@@ -22,7 +22,15 @@ class ToolsController extends Controller
         $dtFormula = MsFormula::where('code', $request->codeformula)->first();
         $resultFormula = $dtFormula['formula'];
 
-        $hasil2 = $this->nilformula($resultFormula, $request->nip);
+        if($resultFormula != "")
+        {
+            $hasil2 = $this->nilformula($resultFormula, $request->nip);
+        }else if($dtFormula['value']){
+            $hasil2 = $dtFormula['value'];
+        }else if($dtFormula['source']){
+            $dtSource = MsSource::where('code', $dtFormula['source'])->first();
+            $hasil2 = $this->cekSource($dtSource['table'], $dtSource['key'], $dtSource['fields'], $dtSource['source'], $request->nip);
+        }
 
         return response()->json([
             'message' => $request->codeformula,
