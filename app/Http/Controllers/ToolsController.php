@@ -3,14 +3,17 @@
 namespace App\Http\Controllers;
 
 use App\MsFormula;
+use App\MsSource;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class ToolsController extends Controller
 {
     public function index(Request $request)
     {
         $request->validate([
-            'codeformula' => 'required|string'
+            'codeformula' => 'required|string',
+            'nip' => 'required|string'
         ]);
 
         //$headers = apache_request_headers();
@@ -19,14 +22,7 @@ class ToolsController extends Controller
         $dtFormula = MsFormula::where('code', $request->codeformula)->first();
         $resultFormula = $dtFormula['formula'];
 
-        $allFormula = MsFormula::get()->toArray();
-        foreach ($allFormula as $item=>$value) {
-            $resultFormula = str_replace($value['code'], $value['value'], $resultFormula);
-        }
-
-        echo $hasil2 = eval("return $resultFormula;");
-
-        //$hasil = $this->rumus($resultFormula);
+        $hasil2 = $this->nilformula($resultFormula, $request->nip);
 
         return response()->json([
             'message' => $request->codeformula,
@@ -35,48 +31,46 @@ class ToolsController extends Controller
         ], 200);
     }
 
-    function rumus($formula)
+    function nilformula($resultFormula, $nip)
     {
-        $cekKali = explode("*", $formula);
-        $cekBagi = explode("/", $formula);
-        $cekTambah = explode("+", $formula);
-        $cekKurang = explode("-", $formula);
-        $countKali = count($cekKali);
-        $countBagi = count($cekBagi);
-        $countTambah = count($cekTambah);
-        $countKurang = count($cekKurang);
-
-        if($countKurang > 1)
+        $cekAr = preg_split("(\(|-\d+|\d+|-|\+|\/|\*|\))", $resultFormula);
+        foreach ($cekAr as $item=>$value)
         {
-            $hasil = $this->caseRumus($this->rumus($cekKurang[0]), $this->rumus($cekKurang[1]), "-") ;
-        } elseif($countTambah > 1) {
-            $hasil = $this->caseRumus($this->rumus($cekTambah[0]), $this->rumus($cekTambah[1]), "+") ;
-        } elseif($countBagi > 1) {
-            $hasil = $this->caseRumus($this->rumus($cekBagi[0]), $this->rumus($cekBagi[1]), "/") ;
-        } elseif($countKali > 1) {
-            $hasil = $this->caseRumus($this->rumus($cekKali[0]), $this->rumus($cekKali[1]), "*") ;
-        }else{
-            $hasil = MsFormula::where('code', $formula)->pluck('value')->first();
+            $cekValue = MsFormula::where('code', $value)->first();
+
+            if($cekValue['source'] != "")
+            {
+                $dtSource = MsSource::where('code', $cekValue['source'])->first();
+                $valueSource = $this->cekSource($dtSource['table'], $dtSource['key'], $dtSource['fields'], $dtSource['source'], $nip);
+                $resultFormula = str_replace($cekValue['code'], $valueSource, $resultFormula);
+            }else if($cekValue['value'] != ""){
+                if($cekValue['value'] == "")
+                {
+                    $cekValue['value'] = 0;
+                }
+                $resultFormula = str_replace($cekValue['code'], $cekValue['value'], $resultFormula);
+            }else if($cekValue['formula'] != "")
+            {
+                $nilaiValue = $this->nilformula($cekValue['formula'], $nip);
+                $resultFormula = str_replace($cekValue['code'], $nilaiValue, $resultFormula);
+            }
         }
 
-        return $hasil;
+        $hasil2 = eval("return $resultFormula;");
+
+        return $hasil2;
     }
 
-    function caseRumus($nilai1, $nilai2, $operasi)
+    function cekSource($table, $key, $fields, $source, $value)
     {
-        switch ($operasi) {
-            case '+':
-                $hasil = $nilai1+$nilai2;
-                break;
-            case '-':
-                $hasil = $nilai1-$nilai2;
-                break;
-            case '*':
-                $hasil = $nilai1*$nilai2;
-                break;
-            case '/':
-                $hasil = $nilai1/$nilai2;
-                break;
+        $dtSource =  DB::table($table)->where($key, $value)->first();
+
+        $hasil = $dtSource->$fields;
+
+        if($source != "")
+        {
+            $rowSource = MsSource::where('code', $source)->first();
+            $hasil = $this->cekSource($rowSource['table'], $rowSource['key'], $rowSource['field'], $rowSource['source'], $rowSource['source']);
         }
 
         return $hasil;

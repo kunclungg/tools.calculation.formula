@@ -2,7 +2,7 @@
 
 use Illuminate\Database\Seeder;
 
-class ms_formula_seeder extends Seeder
+class FormulaSeeder extends Seeder
 {
     /**
      * Run the database seeds.
@@ -16,7 +16,7 @@ class ms_formula_seeder extends Seeder
             'name' => "A",
             'value' => "",
             'source' => "",
-            'formula' => "B+C+D-E",
+            'formula' => "B+C+D",
             'level' => 0,
             'desc' => "desc",
             'create_by' => "System",
@@ -37,7 +37,7 @@ class ms_formula_seeder extends Seeder
             'code' => "C",
             'name' => "C",
             'value' => "",
-            'source' => "prm_c.id",
+            'source' => "1",
             'formula' => "",
             'level' => 2,
             'desc' => "desc",
