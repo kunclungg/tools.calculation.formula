@@ -16,7 +16,7 @@ class FormulaSeeder extends Seeder
             'name' => "A",
             'value' => "",
             'source' => "",
-            'formula' => "B+C+D",
+            'formula' => "@B@+@C@+@D@",
             'level' => 0,
             'desc' => "desc",
             'create_by' => "System",
@@ -27,7 +27,7 @@ class FormulaSeeder extends Seeder
             'name' => "B",
             'value' => "",
             'source' => "",
-            'formula' => "F+G",
+            'formula' => "@F@+@G@",
             'level' => 1,
             'desc' => "desc",
             'create_by' => "System",
@@ -60,7 +60,7 @@ class FormulaSeeder extends Seeder
             'name' => "E",
             'value' => "",
             'source' => "",
-            'formula' => "B+C+D*0.1",
+            'formula' => "@B@+@C@+@D@*0.1",
             'level' => 1,
             'desc' => "desc",
             'create_by' => "System",
@@ -82,6 +82,39 @@ class FormulaSeeder extends Seeder
             'name' => "G",
             'value' => "3000000",
             'source' => "",
+            'formula' => "",
+            'level' => 2,
+            'desc' => "desc",
+            'create_by' => "System",
+        ]);
+
+        DB::table('ms_formula')->insert([
+            'code' => "HEX",
+            'name' => "HEX",
+            'value' => "",
+            'source' => "",
+            'formula' => "@GEX@+@A@+@E@-@DEX@",
+            'level' => 2,
+            'desc' => "desc",
+            'create_by' => "System",
+        ]);
+
+        DB::table('ms_formula')->insert([
+            'code' => "GEX",
+            'name' => "GEX",
+            'value' => "",
+            'source' => "1",
+            'formula' => "",
+            'level' => 2,
+            'desc' => "desc",
+            'create_by' => "System",
+        ]);
+
+        DB::table('ms_formula')->insert([
+            'code' => "DEX",
+            'name' => "DEX",
+            'value' => "",
+            'source' => "2",
             'formula' => "",
             'level' => 2,
             'desc' => "desc",
