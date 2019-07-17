@@ -15,7 +15,7 @@ class MsFormula extends Migration
     {
         Schema::create('ms_formula', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->string('code',20);
+            $table->string('code',20); 
             $table->string('name',255)->default('');
             $table->string('value',100)->default('');
             $table->string('source',100)->default('');

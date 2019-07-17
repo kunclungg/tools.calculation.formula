@@ -70,7 +70,7 @@ class ToolsController extends Controller
                 $resultFormula = str_replace($codeValue, $nilaiValue, $resultFormula);
             }
         }
-        //echo $resultFormula."<br>";
+        echo $resultFormula."<br>";
 
         $hasil2 = eval("return $resultFormula;");
 
